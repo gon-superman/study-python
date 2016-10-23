@@ -1,14 +1,25 @@
 #!/usr/bin/python
 # -*- coding: UTF-8 -*-
+'''
+Created on 2016年10月23日
+@author: qupenghui
+'''
+
 import urllib2
 import os
 import time
+import threading
 
-class Crawler:
+class Crawler(threading.Thread):
     '''
     爬虫，负责爬取网页并存储在相应目录
     '''
     def __init__(self,url,target):
+        if not os.path.exists(target) :
+            raise(RuntimeError,'target not exists !')
+        
+        threading.Thread.__init__(self)
+        
         self.headers={
             'User-Agent':'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/53.0.2785.116 Safari/537.36',
         #     'Accept-Encoding':'gzip, deflate, sdch',
@@ -34,18 +45,14 @@ class Crawler:
             return None
         
     def __savePage__(self,content):
-        if os.path.exists(self.target) :
-            name=self.target+time.strftime('%Y%m%d%H%M%S')+'.txt'
-            f=file(name,'w')
-            f.write(content)
-            f.close()
-            print 'save a page:%s' %(name)
-        else :
-            print 'target not exists !'
+        name=self.target+time.strftime('%Y%m%d%H%M%S')+'.html'
+        f=file(name,'w')
+        f.write(content)
+        f.close()
+        print 'save a page:%s' %(name)
             
-    def start(self):
-        content = self.__getPage__();
+            
+    def run(self):
+        content = self.__getPage__();    
         self.__savePage__(content)
-
-crawler=Crawler('http://www.qiushibaike.com/8hr/page/4','/usr/local/qsbk/')
-crawler.start()
+        
