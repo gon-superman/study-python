@@ -4,7 +4,7 @@
 Created on 2016年10月23日
 @author: qupenghui
 '''
-
+import urllib
 import urllib2
 import os
 import time
@@ -14,9 +14,10 @@ class Crawler(threading.Thread):
     '''
     爬虫，负责爬取网页并存储在相应目录
     '''
-    def __init__(self,url,target):
+    def __init__(self,url,data=None,target=None):
         if not os.path.exists(target) :
-            raise(RuntimeError,'target not exists !')
+            os.mkdir(target)
+            print 'target not exits,mkdir:%s' %target
         
         threading.Thread.__init__(self)
         
@@ -29,11 +30,13 @@ class Crawler(threading.Thread):
             'Accept':'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8'
         }
         self.url=url
+        self.data=data
         self.target=target
         
     def __getPage__(self):
         try:
-            request=urllib2.Request(self.url,headers=self.headers)
+            data=urllib.urlencode(self.data)
+            request=urllib2.Request(self.url,data=data,headers=self.headers)
             response = urllib2.urlopen(request)
             content=response.read()
             return content
