@@ -14,17 +14,17 @@ class Qsbk(threading.Thread):
     '''
         糗事百科爬虫业务处理
     '''
-    def __init__(self,soruce):
-        if not os.path.exists(soruce) :
+    def __init__(self,source):
+        if not os.path.exists(source) :
             raise(RuntimeError,'soruce not exists !')
         threading.Thread.__init__(self)
         self.dataList=[]
-        self.soruce=soruce
+        self.source=source
     
     def __loadPage__(self):
-        fList = os.listdir(self.soruce)
+        fList = os.listdir(self.source)
         for f in fList :
-            content = file(self.soruce+f).read()
+            content = file(self.source+f).read()
             self.__parseContent__(content)
         
     def __parseContent__(self,content):

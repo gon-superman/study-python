@@ -8,9 +8,8 @@ import urllib
 import urllib2
 import os
 import time
-import threading
 
-class Crawler(threading.Thread):
+class Crawler():
     '''
     爬虫，负责爬取网页并存储在相应目录
     '''
@@ -19,7 +18,7 @@ class Crawler(threading.Thread):
             os.mkdir(target)
             print 'target not exits,mkdir:%s' %target
         
-        threading.Thread.__init__(self)
+#         threading.Thread.__init__(self)
         
         self.headers={
             'User-Agent':'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/53.0.2785.116 Safari/537.36',
@@ -33,9 +32,11 @@ class Crawler(threading.Thread):
         self.data=data
         self.target=target
         
-    def __getPage__(self):
+    def __getContent__(self):
         try:
-            data=urllib.urlencode(self.data)
+            data = None
+            if self.data is not None :
+                data=urllib.urlencode(self.data)
             request=urllib2.Request(self.url,data=data,headers=self.headers)
             response = urllib2.urlopen(request)
             content=response.read()
@@ -53,9 +54,19 @@ class Crawler(threading.Thread):
         f.write(content)
         f.close()
         print 'save a page:%s' %(name)
+    
+    def __saveImage__(self,content): 
+        name=self.target+time.strftime('%Y%m%d%H%M%S')+'.jpg'
+        f=file(name,'wb')
+        f.write(content)
+        f.close()
+        print 'save a image:%s' % name       
             
-            
-    def run(self):
-        content = self.__getPage__();    
+    def getPage(self):
+        content = self.__getContent__();    
         self.__savePage__(content)
+        
+    def getImage(self):
+        content = self.__getContent__();    
+        self.__saveImage__(content)
         
